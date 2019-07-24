@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const BotUserSchema = new mongoose.Schema({
   chatId: Number,

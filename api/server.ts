@@ -1,9 +1,8 @@
-const fs = require('fs');
-const http = require('http');
-const https = require('https');
+import fs from 'fs';
+import http from 'http'
+import https from 'https'
 
 const app = require("./app");
-const config = require("./config");
 const db = require("./db");
 
 const bot = require('./controllers/bot');

@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
-const config = require("./config");
+import { config } from './config'
 
 mongoose.connect(config.db, { useNewUrlParser: true });
 
-db = mongoose.connection;
+const db1 = mongoose.connection;
 
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
-db.once("open", function() {
+db1.on("error", console.error.bind(console, "MongoDB connection error:"));
+db1.once("open", function() {
   console.log("MongoDB connected!");
 });
 

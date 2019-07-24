@@ -1,8 +1,11 @@
-const config = require('../config');
 const base64 = require('js-base64').Base64;
 const utils = require('../controllers/utils');
 const fs = require("fs");
 const Wallet = require("../models/Wallet");
+import { config } from '../config';
+
+const { Minter } = require('minter-js-sdk');
+const minterSDK = new Minter({ apiType: 'node', baseURL: config.nodeURL });
 
 exports.scoring = async (address) => {
   let wallet = await Wallet.findOne({ address: address })
@@ -28,7 +31,7 @@ exports.scoring = async (address) => {
     if (newWallet.score > 100) newWallet.score = 100;
     return await Wallet.create(newWallet);
   } else {
-    if ((new Date() - wallet.updatedAt) > (config.updateDuration * 1000)) {
+    if ((new Date().getTime() - wallet.updatedAt.getTime()) > (config.updateDuration * 1000)) {
 
       let newWallet = await getRating(address, wallet);
       Wallet.findByIdAndUpdate(wallet._id, newWallet, (err, res) => {
@@ -51,23 +54,27 @@ const getRating = async (address, wallet = null) => {
 
     let totalBipBalance = 0;
 
-    let icon = getIcon(totalDelegatedBipValue, totalBipBalance);
-    let iconName = getIconName(totalDelegatedBipValue, totalBipBalance);
-
-    balances.forEach(item => {
-      let coin = getCoin(coins, item.coin);
-      console.log(coin);
-
-      let bips = (+coin.reserveBalance) * (1 - (1 - (+item.amount) / (+coin.volume)) ** (1 / coin.crr)) * 100;
-
+    for (let item of balances) {
       if (item.coin === 'BIP') {
         item.bip_value = (+item.amount);
         totalBipBalance += (+item.amount);
       } else {
-        item.bip_value = bips;
-        totalBipBalance += bips;
+        try {
+          let a = await minterSDK.estimateCoinSell({
+            coinToSell: item.coin,
+            valueToSell: (+item.amount),
+            coinToBuy: 'BIP',
+          })
+          item.bip_value = (+a.will_get);
+          totalBipBalance += (+a.will_get);
+        } catch (error) {
+          console.log(error.responce);
+        }
       }
-    });
+    }
+
+    let icon = getIcon(totalDelegatedBipValue, totalBipBalance);
+    let iconName = getIconName(totalDelegatedBipValue, totalBipBalance);
 
     delegations = delegations.data;
     let delegatedKarma = getDelegatedKarma(delegations);
@@ -107,7 +114,7 @@ const getRating = async (address, wallet = null) => {
       }
       // Smart get RATING
       if (transactions[i].from === 'Mx3224b7d1a85d972c0831f9fec27b9127cde4e54b' && transactions[i].data.coin === 'RATING') {
-        smart_expert += +(transactions[i].data.value);
+        smart_rating += +(transactions[i].data.value);
         score += 5;
       }
       // Create coins Tx
@@ -140,7 +147,7 @@ const getRating = async (address, wallet = null) => {
     let existCoins = 0;
     if (coinsTx.length > 0) {
       for (let i = 0; i < coinsTx.length; i++) {
-        for (j = 0; j < coins.length; j++) {
+        for (let j = 0; j < coins.length; j++) {
           if (coins[j].symbol === coinsTx[i].symbol) {
             existCoins += 1;
             break;
@@ -150,8 +157,8 @@ const getRating = async (address, wallet = null) => {
     }
 
     if (wallet === null) {
-      tLenght = transactions.length;
-      age = transactions[tLenght - 1].timestamp;
+      let tLenght = transactions.length;
+      let age = transactions[tLenght - 1].timestamp;
       return {
         address: address,
         balances: balances,

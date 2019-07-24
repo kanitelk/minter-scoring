@@ -1,5 +1,5 @@
 const superagent = require("superagent");
-const config = require("../config");
+import { config } from '../config';
 
 exports.getAddressInfo = async function (address) {
   const responce = await superagent
@@ -23,6 +23,26 @@ exports.getTransactions = async function (address) {
         .retry(3);
 
       arr = [...arr, ...res.body.data.filter(tx => tx.type !== 7)]
+    }
+  }
+
+  return arr;
+};
+
+exports.getAllTransactions = async function (address) {
+  let arr = [];
+  const responce = await superagent
+    .get(config.explorerURL + "/addresses/" + address + "/transactions?limit=1000")
+    .retry(3);
+
+  arr = [...responce.body.data];
+  if (responce.body.meta.last_page > 1) {
+    for (let i = 2; i <= responce.body.meta.last_page; i++) {
+      let res = await superagent
+        .get(config.explorerURL + "/addresses/" + address + `/transactions?limit=1000&page=${i}`)
+        .retry(3);
+
+      arr = [...arr, ...res.body.data];
     }
   }
 

@@ -5,7 +5,7 @@ const db = require('./db');
 
 const BotUser = require('./models/BotUser');
 
-const config = require('./config');
+import { config } from './config';
 
 const bot = new TelegramBot(config.botToken, {
   polling: true, request: {
@@ -19,12 +19,7 @@ const bot = new TelegramBot(config.botToken, {
   }
 });
 
-let text = `Здравстуйте! \n
-Мы подвели итоги недели и выпустили обновление скоринга.
-Подробности: https://t.me/minterw/131 \n
-P.S: Не забывайте про монету SCORING. 
-Рекомендуем к покупке :)
-`;
+let text = `⚡️ Сегодня в 12:00 состоится розыгрыш 10 монет MINTERWORK на канале @minterw.\nБудет 5 победителей, каждый получит по 2 MINTERWORK (~75 BIP). Конкурс продлится 30 минут.\n\nНе пропустите! 😉`;
 
 BotUser.find({}, async (err, res) => {
   const chats = res.map(item => item.chatId)

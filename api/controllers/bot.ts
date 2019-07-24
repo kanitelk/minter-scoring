@@ -1,7 +1,6 @@
-const TelegramBot = require('node-telegram-bot-api');
-const Agent = require('socks5-https-client/lib/Agent')
+import TelegramBot from 'node-telegram-bot-api';
+import Agent from 'socks5-https-client/lib/Agent';
 
-const Wallet = require("../models/Wallet");
 const BotUser = require('../models/BotUser');
 
 const config = require('../config');
@@ -34,6 +33,8 @@ bot.on('message', async (msg) => {
 
   console.log(msg.text);
   if (msg.text.length === 42) {
+    bot.sendMessage(chatId, 'Проверяем адрес...\nЭто займет несколько секунд... ☘️');
+
     let send = await scoring(msg.text)
     if (send === null || typeof send === 'undefined') {
       bot.sendMessage(chatId, 'Ошибка при проверке');
@@ -64,7 +65,7 @@ bot.on('message', async (msg) => {
         coins = send.coins.map((item) => item.symbol).join(', ')
       }
 
-      let level = ('' + send.totalDelegatedBip)[0];
+      let level = ('' + send.totalBip)[0];
       let smart_expert, smart_rating;
       if (send.smart_expert > 0) {
         smart_expert = `\nSMART(X) Expert (${send.smart_expert}) ✅`
@@ -73,7 +74,7 @@ bot.on('message', async (msg) => {
         smart_rating = `\nSMART(X) Project Rating (${send.smart_rating}) ✅`
       } else smart_rating = '';
 
-      send = `${send.icon} ${send.address.substr(0, 12) + '...' + send.address.slice(-8)} \n${send.iconName} ${level}-го уровня\n\nKARMA (баланс): ${Math.round(send.balanceKarma * 100000) / 100000} ☘️ \nKARMA (делегировано): ${Math.round(send.delegatedKarma * 100000) / 100000} ☘️ \nKARMA (получено): ${Math.round(send.receivedKarma * 100000) / 100000} ☘️ \n\nВозраст: ${Math.floor(+((new Date() - age) / 86400000))} дней 📅 \nGenesis (& KYC): ${genesisString} \n\nДелегировано: ${send.totalDelegatedBip.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIP \nТранзакции: ${send.transactions} \n\nСозданные монеты: ${coins}\nЛиквидировано монет: ${send.coins.length - send.existCoins} \n\nБлагодарности: ${send.respectTx.length} 👍\nЖалобы: ${send.scamTx.length}  👎\nВерификации: ${send.verificationTx.length} 🤝 ${smart_expert} ${smart_rating} \n\n*Скоринг: ${send.score}/100*\n*Уровень доверия: ${levelString}* \n\n🔻 Больше информации:\nhttps://scoring.minter.work/?address=${send.address}`
+      send = `${send.icon} ${send.address.substr(0, 12) + '...' + send.address.slice(-8)} \n${send.iconName} ${level}-го уровня\n\nKARMA (баланс): ${Math.round(send.balanceKarma * 100000) / 100000} ☘️ \nKARMA (делегировано): ${Math.round(send.delegatedKarma * 100000) / 100000} ☘️ \nKARMA (получено): ${Math.round(send.receivedKarma * 100000) / 100000} ☘️ \n\nВозраст: ${Math.floor(+((new Date().getTime() - age.getTime()) / 86400000))} дней 📅 \nGenesis (& KYC): ${genesisString} \n\nДелегировано: ${send.totalDelegatedBip.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIP \nТранзакции: ${send.transactions} \n\nСозданные монеты: ${coins}\nЛиквидировано монет: ${send.coins.length - send.existCoins} \n\nБлагодарности: ${send.respectTx.length} 👍\nЖалобы: ${send.scamTx.length}  👎\nВерификации: ${send.verificationTx.length} 🤝 ${smart_expert} ${smart_rating} \n\n*Скоринг: ${send.score}/100*\n*Уровень доверия: ${levelString}* \n\n🔻 Больше информации:\nhttps://scoring.minter.work/?address=${send.address}`
 
       bot.sendMessage(chatId, send, opts)
     }
