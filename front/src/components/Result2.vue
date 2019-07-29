@@ -1,21 +1,25 @@
 <template>
-  <div class="block result-block">
-    <h2>Результат: {{info.score}}/100</h2>
-    <h4 style="margin-top: -15px;">Уровень доверия: <span v-bind:class="{'red':info.score < 30, 'orange': info.score >=30 && info.score < 65 ,'green': info.score > 65}">{{rankString}}</span></h4>
-    <span>{{info.icon}} {{info.iconName}} {{level}}-го уровня</span>
-    <span>Возраст: <strong>{{age}} дней 📅</strong></span>
-    <span>Genesis: 
-      <strong v-if="info.genesis">Да ✔</strong>
-      <strong v-if="!info.genesis">Нет</strong>
+  <div class="block result-block2">
+    <h2>Карма и монеты</h2>
+
+    <span style="margin-top: -10px">KARMA (Баланс): <strong>{{Math.round(info.balanceKarma * 100000) / 100000}} ☘️</strong></span>
+    <span>KARMA (Делегировано): <strong>{{Math.round(info.delegatedKarma * 100000) / 100000}} ☘️</strong></span>
+    <span style="margin-bottom: 10px">KARMA (Получено): <strong>{{Math.round(info.receivedKarma * 100000) / 100000}} ☘️</strong></span>
+    <span style="margin-top: 10px;">Созданные монеты: 
+      <span v-if="info.coins.length === 0">Нет</span>
+      <span v-if="info.coins.length > 0">{{info.coins.map((item) => item.symbol).join(', ')}}</span>
     </span>
-    <span style="margin-top: 10px">Делегировано: <strong>{{info.totalDelegatedBip.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}}</strong> BIP</span>
-    <span>Транзакции: <strong>{{info.transactions}}</strong></span>
+    <span v-if="info.coins.length > 0">Ликвидировано монет: {{info.coins.length - info.existCoins}}<strong></strong></span>
+
+    <span style="margin-top: 10px">Благодарности: <strong v-bind:class="{'green': info.respectTx.length > 0}">{{info.respectTx.length}} 👍</strong></span>
+    <span>Жалобы: <strong v-bind:class="{'red': info.scamTx.length > 0}">{{info.scamTx.length}} 👎</strong></span>
+    <span>Верификации:<strong v-bind:class="{'green': info.verificationTx.length > 0}"> {{info.verificationTx.length}} 👍</strong> </span>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Result',
+  name: 'Result2',
   props: ['info', 'explorerURL'],
   computed: {
     rankString: function() {
@@ -42,8 +46,8 @@ export default {
 </script>
 
 <style lang="scss" scope>
-  .result-block {
-    grid-column: 2 / 6;
+  .result-block2 {
+    grid-column: 6 / 10;
     display: flex;
     flex-flow: column wrap;
     justify-content: flex-start;
@@ -65,7 +69,7 @@ export default {
   }
 
   @media screen and (max-width: 1000px) {
-    .result-block {
+    .result-block2 {
       grid-column: 2 / 10;
       display: flex;
       flex-flow: column wrap;

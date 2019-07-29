@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700,900&display=swap&subset=cyrillic');
+
+$primary-orange: #FC4F1E;
+$primary-gray: #E5E5E5;
+
+#app {
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  color: #474747;
+  background-color: #E5E5E5;
+  min-height: 100%;
+  padding-bottom: 40px;
+}
+
+a {
+  color: $primary-orange;
+}
+
+.app-container {
+  display: grid;
+  grid-template-columns: 10% repeat(8, 1fr) 10%;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  margin: 20px;
+}
+
+.block {
+  display: flex;
+  flex-flow: column wrap;
+  background-color: #fff;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+}
+
+.primary-button {
+  width: 204px;
+  height: 44px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 22px;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  color: #fff;
+  background-color: $primary-orange;
+  border: none;
+  outline: none;
+
+  &:hover {
+    background-color: darken($primary-orange, 20%);
+    cursor: pointer;
+  }
+
+  &:disabled {
+    background-color: darken($primary-orange, 35%);
+    color: rgb(194, 194, 194);
+    cursor: default;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .app-container {
+    display: grid;
+    grid-template-columns: 0fr repeat(8, 1fr) 0fr;
+    grid-row-gap: 15px;
+    grid-column-gap: 15px;
+    margin: 5px;
+    margin-top: 15px;
+  }
+
+  .block {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+  }
+
+  .primary-button {
+    font-size: 14px;
+    width: 120px;
+  }
+}

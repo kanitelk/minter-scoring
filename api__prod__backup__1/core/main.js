@@ -1,13 +1,13 @@
+const config = require('../config');
 const base64 = require('js-base64').Base64;
 const utils = require('../controllers/utils');
 const fs = require("fs");
 const Wallet = require("../models/Wallet");
-import { config } from '../config';
 
 const { Minter } = require('minter-js-sdk');
 const minterSDK = new Minter({ apiType: 'node', baseURL: config.nodeURL });
 
-exports.scoring = async (address: string) => {
+exports.scoring = async (address) => {
   let wallet = await Wallet.findOne({ address: address })
 
   if (wallet === null) {
@@ -31,7 +31,7 @@ exports.scoring = async (address: string) => {
     if (newWallet.score > 100) newWallet.score = 100;
     return await Wallet.create(newWallet);
   } else {
-    if ((new Date().getTime() - wallet.updatedAt.getTime()) > (config.updateDuration * 1000)) {
+    if ((new Date() - wallet.updatedAt) > (config.updateDuration * 1000)) {
 
       let newWallet = await getRating(address, wallet);
       Wallet.findByIdAndUpdate(wallet._id, newWallet, (err, res) => {
@@ -42,21 +42,9 @@ exports.scoring = async (address: string) => {
   }
 }
 
-const getRating = async (address: string, wallet: string = null) => {
-  let profile = false;
-  try {
-    profile = await utils.getMinterscanProfile(address);
-    if (Object.keys(profile).length == 0) {
-      profile = false;
-    }
-  } catch (error) {
-    profile = false;
-  }
-
+const getRating = async (address, wallet = null) => {
   try {
     let score = 0;
-
-    if (profile !== false && profile.isVerified === true) score += 10;
 
     let balances = await utils.getAddressInfo(address);
     let delegations = await utils.getDelegations(address);
@@ -66,7 +54,7 @@ const getRating = async (address: string, wallet: string = null) => {
 
     let totalBipBalance = 0;
 
-    for (let item of balances) {
+    for (item of balances) {
       if (item.coin === 'BIP') {
         item.bip_value = (+item.amount);
         totalBipBalance += (+item.amount);
@@ -159,7 +147,7 @@ const getRating = async (address: string, wallet: string = null) => {
     let existCoins = 0;
     if (coinsTx.length > 0) {
       for (let i = 0; i < coinsTx.length; i++) {
-        for (let j = 0; j < coins.length; j++) {
+        for (j = 0; j < coins.length; j++) {
           if (coins[j].symbol === coinsTx[i].symbol) {
             existCoins += 1;
             break;
@@ -169,8 +157,8 @@ const getRating = async (address: string, wallet: string = null) => {
     }
 
     if (wallet === null) {
-      let tLenght = transactions.length;
-      let age = transactions[tLenght - 1].timestamp;
+      tLenght = transactions.length;
+      age = transactions[tLenght - 1].timestamp;
       return {
         address: address,
         balances: balances,
@@ -191,7 +179,6 @@ const getRating = async (address: string, wallet: string = null) => {
         existCoins: existCoins,
         smart_expert: smart_expert,
         smart_rating: smart_rating,
-        profile: profile,
         updatedAt: new Date(),
       }
     } else {
@@ -223,7 +210,6 @@ const getRating = async (address: string, wallet: string = null) => {
         existCoins: existCoins,
         smart_expert: smart_expert,
         smart_rating: smart_rating,
-        profile: profile,
         updatedAt: new Date()
       }
     }

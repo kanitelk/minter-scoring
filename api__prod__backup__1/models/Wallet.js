@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require("mongoose");
 
 const WalletSchema = new mongoose.Schema({
   address: String,
@@ -21,8 +21,7 @@ const WalletSchema = new mongoose.Schema({
   icon: String,
   iconName: String,
   smart_expert: Number,
-  smart_rating: Number,
-  mscan: Object
+  smart_rating: Number
 },
   {
     timestamps: true

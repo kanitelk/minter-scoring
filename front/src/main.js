@@ -6,7 +6,9 @@ Vue.config.productionTip = false
 
 Vue.use(Vuetify);
 
-import "vuetify/dist/vuetify.min.css"; 
+//import "vuetify/dist/vuetify.min.css"; 
+
+import 'normalize.css'
 
 new Vue({
   render: h => h(App),

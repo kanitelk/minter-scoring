@@ -1,42 +1,23 @@
 <template>
-  <v-hover>
-    <v-card class="status-card" slot-scope="{ hover }"
-        :class="`elevation-${hover ? 12 : 2}`">
-      <v-flex xs12>
-        <v-layout column wrap align-start ma-1>
-          <span class="headline">Благодарности</span>
-        </v-layout>
-        <v-data-table
-          :headers="headers"
-          :items="respectTx"
-          class="elevation-1"
-          no-data-text="Благодарностей не найдено. Надеемся, это не навсегда :)"
-        >
-          <template v-slot:items="props">
-            <td class="text-xs-left">{{ decode(props.item.payload) }}</td>
-            <td class="text-xs-left"><a :href="`${explorerURL}/tx/${props.item.hash}`" target="_blank">{{ props.item.from.substr(0,12) + '...' + props.item.from.slice(-8)}}</a></td>
-          </template>
-        </v-data-table>
-      </v-flex>
-    </v-card>
-  </v-hover>
+  <div class="block respects-block">
+    <h2>Благодарности</h2>
+    <div class="respects">
+      <div v-for="(item, index) of respectTx" class="respect">
+        <div class="payload">
+          <p>{{decode(item.payload)}}</p>
+        </div>
+        <div class="from">
+          <a :href="`${explorerURL}/tx/${item.hash}`" target="_blank">{{ item.from.substr(0,6) + '...' + item.from.slice(-4)}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
   export default {
     name: 'respects',
     props: ['respectTx', 'explorerURL'],
-    created() {
-      console.log(this.respectTx)
-    },
-    data () {
-      return {
-        headers: [
-          { text: 'Сообщение', value: 'from', sortable: false },
-          { text: 'Отправитель', value: 'payload', sortable: false },
-        ],
-      }
-    },
     methods: {
       decode: function(string) {
         return Buffer.from(string, 'base64').toString('utf8')
@@ -46,22 +27,60 @@
 </script>
 
 <style lang="scss" scoped>
-  .history-table {
-    margin-top: 15px;
+  @import '../App';
+
+  .respects-block {
+    grid-column: 2 / 10;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .respects {
+      display: flex;
+      flex-flow: column wrap;
+      align-items: flex-start;
+      text-align: left;
+      width: 100%;
+
+      .respect {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        background-color: $primary-gray;
+        margin-bottom: 10px;
+
+        .from {
+          display: flex;
+          justify-content: center;
+          margin-left: 10px;
+          padding-top: 5px;
+          padding-bottom: 5px;
+          padding-right: 20px;
+        }
+
+        .payload {
+          padding-left: 20px;
+          word-break: break-all;
+        }
+      }
+
+      a {
+        text-decoration: none;
+
+        &:hover {
+          color: darken($primary-orange, 20%);
+        }
+      }
+    }
   }
-  .status-card {
-    width: 100%;
-    padding: 15px;
-    text-align: left !important;
-  }
-  .status_true {
-    color: rgb(13, 182, 13);
-  }
-  .status_false {
-    color: rgb(241, 0, 0);
-  }
-  .text-xs-left {
-    text-overflow: ellipsis !important;
+
+  @media screen and (max-width: 1000px) {
+    .respect {
+      flex-flow: row wrap;
+    }
   }
 </style>
 
