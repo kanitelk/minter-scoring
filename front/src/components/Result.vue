@@ -10,6 +10,9 @@
     </span>
     <span style="margin-top: 10px">Делегировано: <strong>{{info.totalDelegatedBip.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}}</strong> BIP</span>
     <span>Транзакции: <strong>{{info.transactions}}</strong></span>
+    <br />
+    <span v-if="info.smart_expert > 0">SMART(X) Expert: {{Math.round(info.smart_expert * 100) / 100}} ✅</span>
+    <span v-if="info.smart_rating > 0">SMART(X) Project: {{Math.round(info.smart_rating * 100) / 100}} ✅</span>
   </div>
 </template>
 

@@ -1,8 +1,8 @@
 <template>
-  <div class="block respects-block">
+  <div v-if="respectTx.length > 0" class="block table-block">
     <h2>Благодарности</h2>
-    <div class="respects">
-      <div v-for="(item, index) of respectTx" class="respect">
+    <div class="txs">
+      <div v-for="item of respectTx" :key="item.txn" class="tx">
         <div class="payload">
           <p>{{decode(item.payload)}}</p>
         </div>
@@ -11,6 +11,10 @@
         </div>
       </div>
     </div>
+  </div>
+  <div v-else class="block table-block-null">
+    <h2>Благодарностей нет</h2>
+    <span>Надеемся, что будут!</span>
   </div>
 </template>
 
@@ -28,59 +32,5 @@
 
 <style lang="scss" scoped>
   @import '../App';
-
-  .respects-block {
-    grid-column: 2 / 10;
-    display: flex;
-    flex-flow: column wrap;
-    justify-content: space-between;
-    align-items: flex-start;
-
-    .respects {
-      display: flex;
-      flex-flow: column wrap;
-      align-items: flex-start;
-      text-align: left;
-      width: 100%;
-
-      .respect {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        background-color: $primary-gray;
-        margin-bottom: 10px;
-
-        .from {
-          display: flex;
-          justify-content: center;
-          margin-left: 10px;
-          padding-top: 5px;
-          padding-bottom: 5px;
-          padding-right: 20px;
-        }
-
-        .payload {
-          padding-left: 20px;
-          word-break: break-all;
-        }
-      }
-
-      a {
-        text-decoration: none;
-
-        &:hover {
-          color: darken($primary-orange, 20%);
-        }
-      }
-    }
-  }
-
-  @media screen and (max-width: 1000px) {
-    .respect {
-      flex-flow: row wrap;
-    }
-  }
 </style>
 

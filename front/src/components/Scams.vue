@@ -1,7 +1,19 @@
 <template>
-  <div class="block scams">
-    <td class="text-xs-left">{{ decode(props.item.payload) }}</td>
-    <td class="text-xs-left"><a :href="`${explorerURL}/tx/${props.item.hash}`" target="_blank">{{ props.item.from.substr(0,12) + '...' + props.item.from.slice(-8)}}</a></td>
+  <div v-if="scamTx.length > 0" class="block table-block">
+    <h2>Жалобы</h2>
+    <div class="txs">
+      <div v-for="item of scamTx" :key="item.txn" class="tx">
+        <div class="payload">
+          <p>{{decode(item.payload)}}</p>
+        </div>
+        <div class="from">
+          <a :href="`${explorerURL}/tx/${item.hash}`" target="_blank">{{ item.from.substr(0,6) + '...' + item.from.slice(-4)}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-else class="block table-block-null">
+    <h2>Жалоб нет</h2>
   </div>
 </template>
 
@@ -17,20 +29,7 @@
   }
 </script>
 
-<style lang="scss" scoped>
-  .status-card {
-    width: 100%;
-    padding: 15px;
- 
-  }
-  .status_true {
-    color: rgb(13, 182, 13);
-  }
-  .status_false {
-    color: rgb(241, 0, 0);
-  }
-  .text-xs-left {
-    text-overflow: ellipsis !important;
-  }
+<style lang="scss">
+  @import '../App';
 </style>
 

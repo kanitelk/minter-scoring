@@ -19,6 +19,8 @@ export default {
 </script>
 
 <style lang="scss">
+  @import '../../App';
+
   .telegram-banner {
     display: flex;
     flex-flow: column wrap;
@@ -47,7 +49,7 @@ export default {
     justify-content: center;
     height: 300px;
     min-width: 100%;
-    background-color: #FC4F1E;
+    background-color: $primary-orange;
 
     img {
       align-self: flex-end;

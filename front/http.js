@@ -1,6 +1,6 @@
 import axios from "axios";
 
-let baseUrl = 'http://localhost/api/';
+let baseUrl = 'https://minter-scoring.space/api/';
 
 export const HTTP = axios.create({
   baseURL: baseUrl

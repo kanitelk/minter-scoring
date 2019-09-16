@@ -1,10 +1,12 @@
-import TelegramBot from 'node-telegram-bot-api';
-import Agent from 'socks5-https-client/lib/Agent';
+const db = require('./db');
+const TelegramBot = require('node-telegram-bot-api');
+const Agent = require('socks5-https-client/lib/Agent');
 
-const BotUser = require('../models/BotUser');
+const Wallet = require('./models/Wallet');
+const BotUser = require('./models/BotUser');
 
-import { config } from '../config'
-const { scoring } = require('../core/main');
+const config = require('./config');
+const scoring = require('./core/main');
 
 const bot = new TelegramBot(config.botToken, {
   polling: true, request: {
@@ -21,17 +23,26 @@ const bot = new TelegramBot(config.botToken, {
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
 
-  let user = await BotUser.findOne({ chatId: parseInt(chatId) });
-  if (user === null) BotUser.create({ chatId: parseInt(chatId), req: 1 })
-  else BotUser.findOneAndUpdate({ chatId: parseInt(chatId) }, { req: user.req + 1 })
+  await BotUser.findOneAndUpdate(
+    { _id: chatId },
+    {
+      _id: chatId,
+      username: msg.from.username,
+      first_name: msg.from.first_name,
+      last_name: msg.from.last_name,
+      $inc: { req: 0.5 }
+    },
+    { upsert: true },
+    (err, res) => {
+      if (err) console.log(err);
+    })
 
   if (msg.text === '/start') {
     let text = `Добро пожаловать!\nПришлите в ответ адрес для проверки.`
     bot.sendMessage(chatId, text);
-    return
+    return;
   }
 
-  console.log(msg.text);
   if (msg.text.length === 42) {
     bot.sendMessage(chatId, 'Собираем данные и проверяем адрес...\nЭто займет несколько секунд... ☘️');
 
@@ -45,16 +56,14 @@ bot.on('message', async (msg) => {
         disable_web_page_preview: true
       };
 
-      let age = new Date();
-      age.setTime(send.age);
+      let age = new Date(send.age);
 
       let genesisString = '';
       if (send.genesis === true) genesisString = 'Да ✔'
       else (genesisString = 'Нет')
 
       let profileInfo;
-      console.log(send.profile);
-      
+
       if (!send.profile) {
         profileInfo = `\n\nПрофиль Minterscan: Нет\n\n`
       } else {
@@ -84,16 +93,14 @@ bot.on('message', async (msg) => {
         smart_rating = `\nSMART(X) Project Rating (${send.smart_rating}) ✅`
       } else smart_rating = '';
 
-      let message = `${send.icon} ${send.address.substr(0, 12) + '...' + send.address.slice(-8)} \n${send.iconName} ${level}-го уровня ${profileInfo}KARMA (баланс): ${Math.round(send.balanceKarma * 100000) / 100000} ☘️ \nKARMA (делегировано): ${Math.round(send.delegatedKarma * 100000) / 100000} ☘️ \nKARMA (получено): ${Math.round(send.receivedKarma * 100000) / 100000} ☘️ \n\nВозраст: ${Math.floor(+((new Date().getTime() - age.getTime()) / 86400000))} дней 📅 \nGenesis (& KYC): ${genesisString} \n\nДелегировано: ${send.totalDelegatedBip.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIP \nТранзакции: ${send.transactions} \n\nСозданные монеты: ${coins}\nЛиквидировано монет: ${send.coins.length - send.existCoins} \n\nБлагодарности: ${send.respectTx.length} 👍\nЖалобы: ${send.scamTx.length}  👎\nВерификации: ${send.verificationTx.length} 🤝 ${smart_expert} ${smart_rating} \n\n<strong>Скоринг: ${send.score}/100\nУровень доверия: ${levelString}</strong> \n\n🔻 Больше информации:\nhttps://scoring.minter.work/?address=${send.address}`
+      let message = `${send.icon} ${send.address.substr(0, 12) + '...' + send.address.slice(-8)} \n${send.iconName} ${level}-го уровня ${profileInfo}KARMA (баланс): ${Math.round(send.balanceKarma * 100000) / 100000} ☘️ \nKARMA (делегировано): ${Math.round(send.delegatedKarma * 100000) / 100000} ☘️ \nKARMA (получено): ${Math.round(send.receivedKarma * 100000) / 100000} ☘️ \n\nВозраст: ${Math.floor(+((new Date().getTime() - age.getTime()) / 86400000))} дней 📅 \nGenesis (& KYC): ${genesisString} \n\nДелегировано: ${send.totalDelegatedBip.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIP \nТранзакции: ${send.transactions} \n\nСозданные монеты: ${coins}\nЛиквидировано монет: ${send.coins.length - send.existCoins} \n\nБлагодарности: ${send.respectTx.length} 👍\nЖалобы: ${send.scamTx.length}  👎\nВерификации: ${send.verificationTx.length} 🤝 ${smart_expert} ${smart_rating} \n\n<strong>Скоринг: ${send.score}/100\nУровень доверия: ${levelString}</strong> \n\n🔻 Больше информации:\nhttps://scoring.mn/?address=${send.address}`
 
-      if (send.profile.icon && send.profile.icon.length > 0) {
-        bot.sendPhoto(chatId, send.profile.icon, {
-          caption: message,
-          parse_mode: 'HTML'
-        })
-      } else {        
-        bot.sendMessage(chatId, message, opts);
+      if (send.profile && send.profile.icon.length > 0) {
+        await bot.sendPhoto(chatId, send.profile.full_icon);
       }
+
+      bot.sendMessage(chatId, message, opts);
+
     }
 
   } else {

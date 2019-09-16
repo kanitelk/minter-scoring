@@ -1,5 +1,5 @@
 const superagent = require("superagent");
-import { config } from '../config';
+const config = require('../config');
 
 exports.getAddressInfo = async function (address) {
   const responce = await superagent

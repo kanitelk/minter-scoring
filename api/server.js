@@ -1,11 +1,9 @@
-import fs from 'fs';
-import http from 'http'
-import https from 'https'
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
 
-const app = require("./app");
 const db = require("./db");
-
-const bot = require('./controllers/bot');
+const app = require('./app');
 
 // Certificate
 // const privateKey = fs.readFileSync('/etc/letsencrypt/live/minter-scoring.space/privkey.pem', 'utf8');
