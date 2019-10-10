@@ -7,44 +7,37 @@ $primary-orange: #de4a20;
 $primary-gray: #f5f5f5;
 
 // Main styles
+
+html {
+  background-color: $primary-gray;
+}
+
 #app {
   font-family: 'Roboto', sans-serif;
   text-align: center;
   color: #474747;
-  background-color: $primary-gray;
-  min-height: calc(100vh - 60px);
-  position: relative;
-  padding-bottom: 60px;
-  &::after {
-    display: block;
-    height: 70px;
-  }
 }
 
 a {
   color: $primary-orange;
 
   &:hover {
+    color: darken($primary-orange, 2);
     transition: all 0.3s ease;
   }
-}
-
-.app-container {
-  display: grid;
-  grid-template-columns: 10% repeat(8, 1fr) 10%;
-  grid-column-gap: 20px;
-  grid-row-gap: 20px;
-  margin: 20px;
-  padding-bottom: 40px;
 }
 
 .block {
   display: flex;
   flex-flow: column wrap;
   background-color: #fff;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 20px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+
+  &:hover {
+    box-shadow: 0 5px 5px rgba(119, 119, 119, 0.25), 0 5px 5px rgba(97, 97, 97, 0.22);
+  }
 }
 
 .primary-button {
@@ -72,97 +65,5 @@ a {
     background-color: #4c4c4c;
     color: #fff;
     cursor: default;
-  }
-}
-
-@media screen and (max-width: 1000px) {
-  .app-container {
-    display: grid;
-    grid-template-columns: 0fr repeat(8, 1fr) 0fr;
-    grid-row-gap: 15px;
-    grid-column-gap: 15px;
-    margin: 5px;
-    margin-top: 15px;
-  }
-
-  .block {
-    padding-left: 15px;
-    padding-right: 10px;
-    padding-bottom: 10px;
-  }
-
-  .primary-button {
-    font-size: 14px;
-    width: 120px;
-  }
-}
-
-@media screen and (min-width: 1400px) {
-  .app-container {
-    grid-template-columns: 20% repeat(8, 1fr) 20%;
-  }
-}
-
-// TX TABLES STYLES
-.table-block {
-  grid-column: 2 / 10;
-  display: flex;
-  flex-flow: column wrap;
-  justify-content: space-between;
-  align-items: flex-start;
-
-  .txs {
-    display: flex;
-    flex-flow: column wrap;
-    align-items: flex-start;
-    text-align: left;
-    width: 100%;
-
-    .tx {
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      background-color: $primary-gray;
-      margin-bottom: 10px;
-
-      .from {
-        display: flex;
-        justify-content: center;
-        margin-left: 10px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        padding-right: 20px;
-      }
-
-      .payload {
-        padding-left: 20px;
-        word-break: break-all;
-      }
-    }
-
-    a {
-      text-decoration: none;
-
-      &:hover {
-        color: darken($primary-orange, 20%);
-      }
-    }
-  }
-}
-
-.table-block-null {
-  grid-column: 2 / 10;
-  display: flex;
-  flex-flow: column wrap;
-  justify-content: center;
-  align-items: center;
-  padding-top: 15px;
-}
-
-@media screen and (max-width: 1000px) {
-  .tx {
-    flex-flow: row wrap;
   }
 }
