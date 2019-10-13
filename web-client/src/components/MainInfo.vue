@@ -10,11 +10,32 @@
 
     <div class="info">
       <p>{{result.icon}} {{result.iconName}} {{level}} уровня</p>
-      <p>Возраст: <strong>{{age}} дней</strong></p>
-      <p>Генезис: <strong>{{result.genesis ? 'Да' : 'Нет'}}</strong></p>
+      <p>
+        Возраст:
+        <strong>{{age}} дней</strong>
+      </p>
+      <p>
+        Генезис:
+        <strong>{{result.genesis ? 'Да' : 'Нет'}}</strong>
+      </p>
 
-      <p>Делегировано: <strong>{{result.totalDelegatedBip.toLocaleString()}} BIP</strong></p>
-      <p>Транзакции: <strong>{{result.transactions.toLocaleString()}}</strong></p>
+      <p>
+        Делегировано:
+        <strong>{{result.totalDelegatedBip.toLocaleString()}} BIP</strong>
+      </p>
+      <p>
+        Транзакции:
+        <strong>{{result.transactions.toLocaleString()}}</strong>
+      </p>
+
+      <div class="smart" style="margin-top: 2rem;">
+        <span
+          v-if="result.smart_expert > 0"
+        >SMART(X) Expert: {{Math.round(result.smart_expert * 100) / 100}} ✅</span>
+        <span
+          v-if="result.smart_rating > 0"
+        >SMART(X) Project: {{Math.round(result.smart_rating * 100) / 100}} ✅</span>
+      </div>
     </div>
   </div>
 </template>
@@ -40,12 +61,12 @@ export default class MainInfo extends Vue {
   }
 
   get level() {
-    return ('' + this.result.totalDelegatedBip)[0];
+    return ("" + this.result.totalDelegatedBip)[0];
   }
 
   get age() {
     // @ts-ignore
-    return Math.floor(+((new Date() - new Date(this.result.age))/86400000));
+    return Math.floor(+((new Date() - new Date(this.result.age)) / 86400000));
   }
 }
 </script>

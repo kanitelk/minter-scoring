@@ -3,11 +3,14 @@
     <v-progress-circular :size="50" color="primary" indeterminate></v-progress-circular>
   </div>
   <div v-else class="address-view">
-    <Profile :profile="result.profile" class="box" />
+    <Profile v-if="result.profile" :profile="result.profile" class="box" />
     <div class="row">
       <MainInfo :result="result" />
       <CoinsInfo :result="result" />
     </div>
+    <TxList v-if="result.scamTx.length > 0" name="Жалобы" :txs="result.scamTx" class="box" />
+    <TxList v-if="result.respectTx.length > 0" name="Благодарности" :txs="result.respectTx" class="box" />
+    <TxList v-if="result.verificationTx.length > 0" name="Верификации" :txs="result.verificationTx" class="box" />
   </div>
 </template>
 
@@ -17,13 +20,15 @@ import AddressForm from "../components/AddressForm.vue";
 import Profile from "../components/Profile.vue";
 import MainInfo from "../components/MainInfo.vue";
 import CoinsInfo from "../components/CoinsInfo.vue";
+import TxList from '../components/TxList.vue';
 import { getScoring } from "../common/http";
 
 @Component({
   components: {
     Profile,
     MainInfo,
-    CoinsInfo
+    CoinsInfo,
+    TxList
   }
 })
 export default class Address extends Vue {
@@ -66,6 +71,7 @@ export default class Address extends Vue {
 @media screen and (max-width: 1078px) {
   .row {
     width: calc(100% - 1rem);
+    flex-flow: column wrap;
   }
 }
 </style>

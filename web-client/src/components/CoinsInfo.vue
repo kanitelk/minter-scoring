@@ -6,6 +6,13 @@
       <p>KARMA (Баланс): <strong>{{Math.round(result.balanceKarma * 10000) / 10000}}</strong> ☘️</p>
       <p>KARMA (Делегировано): <strong>{{Math.round(result.delegatedKarma * 10000) / 10000}}</strong> ☘️</p>
       <p>KARMA (Получено): <strong>{{Math.round(result.receivedKarma * 10000) / 10000}}</strong> ☘️</p>
+
+      <p style="margin-top: 2rem;">Созданные монеты: {{result.coins.length === 0 ? 'Нет' : createdCoins}}</p>
+      <p v-if="result.coins.length > 0">Ликвидировано монет: {{result.coins.length - result.existCoins}}</p>
+
+      <p style="margin-top: 2rem;">Благодарности: <strong v-bind:class="{'green': result.respectTx.length > 0}">{{result.respectTx.length}} 👍</strong></p>
+      <p>Жалобы: <strong v-bind:class="{'red': result.scamTx.length > 0}">{{result.scamTx.length}} 👎</strong></p>
+      <p>Верификации: <strong v-bind:class="{'green': result.verificationTx.length > 0}"> {{result.verificationTx.length}} 👍</strong></p>
     </div>
   </div>
 </template>
@@ -37,6 +44,11 @@ export default class CoinsInfo extends Vue {
   get age() {
     // @ts-ignore
     return Math.floor(+((new Date() - new Date(this.result.age))/86400000));
+  }
+
+  get createdCoins() {
+    // @ts-ignore
+    return this.result.coins.map(item => item.symbol).join(', ');
   }
 }
 </script>
