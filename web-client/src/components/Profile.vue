@@ -42,6 +42,7 @@ export default class Profile extends Vue {
     min-width: 80px;
     max-width: 80px;
     max-height: 80px;
+    align-self: flex-start;
 
     img {
       -webkit-user-drag: none;
@@ -55,14 +56,12 @@ export default class Profile extends Vue {
   .payload {
     display: flex;
     flex-flow: column wrap;
+    margin-top: -1rem;
 
     .name {
       display: flex;
       flex-flow: row nowrap;
-
-      h2 {
-        line-height: 0;
-      }
+      margin-bottom: -1rem;
 
       i {
         margin-left: 5px;
