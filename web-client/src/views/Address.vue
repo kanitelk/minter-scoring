@@ -61,10 +61,16 @@ export default class Address extends Vue {
 
   async getScoring() {
     this.isLoading = true;
-    this.result = await getScoring(this.address);
+    try {
+      this.result = await getScoring(this.address);
+    } catch (error) {
+      this.result = null;
+      this.isLoading = false;
+      alert('Ошибка выполнения запроса. Возможно, вы превысили лимит 15 запросов/час.');
+      document.location.href = '/';
+    }
+    
     this.isLoading = false;
-
-    // console.log(this.result);
   }
 
   copyAddress() {
