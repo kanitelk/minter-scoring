@@ -91,7 +91,7 @@ router.get("/blacklist/:wallet", async (req, res) => {
     res.json({
       blacklist: {
         status: true,
-        address: bl.address,
+        address: bl._id,
         description: bl.description,
         from: bl.from,
         date: bl.createdAt

@@ -2,7 +2,7 @@
   <div class="card address-form">
     <h2 class="title">Введите адрес</h2>
     <form>
-      <input v-model="address" type="text" placeholder="Mx..." autofocus />
+      <input v-model="address" maxlength="42" type="text" placeholder="Mx..." autofocus />
     </form>
   </div>
 </template>
@@ -10,18 +10,29 @@
 <script lang="ts">
 import { Component, Vue, Watch, Prop } from "vue-property-decorator";
 
+export enum AddressProp {
+  Scoring,
+  Blacklist
+}
+
 @Component
 export default class AddressForm extends Vue {
+  @Prop() addressType!: AddressProp;
   public address: string = "";
 
-  @Watch('address') onAddressChange() {
-    if (this.address.length === 42 && this.address.toLowerCase().includes('mx')) this.submit();
+  @Watch("address") onAddressChange() {
+    if (this.address.length === 42 && this.address.toLowerCase().includes("mx"))
+      this.submit();
   }
 
-  submit () {
-    console.log(this.address);
-    this.$emit('check', this.address);
-    this.$router.push(`/address/${this.address}`)
+  submit() {
+    //console.log(this.address);
+    this.$emit("check", this.address);
+    if (this.addressType === AddressProp.Scoring) {
+      this.$router.push(`/address/${this.address}`);
+    } else if (this.addressType === AddressProp.Blacklist) {
+      this.$router.push(`/blacklist/${this.address}`);
+    }
   }
 }
 </script>

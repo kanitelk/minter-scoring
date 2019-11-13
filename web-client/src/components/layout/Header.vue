@@ -4,7 +4,8 @@
       <h2 @click="$router.push('/')">Minter Scoring</h2>
     </div>
     <div class="menu">
-      <a href="https://t.me/minterw" target="_blank">
+      <router-link to="/blacklist">BlackList</router-link>
+      <a href="https://tele.click/minterw" target="_blank">
         Telegram
         <v-icon teal>mdi-telegram</v-icon>
       </a>
@@ -43,14 +44,12 @@ export default class Header extends Vue {}
     }
   }
 
-  .menu {
-    margin-right: 1rem;
-  }
-
   .menu a {
     color: #fff;
     text-decoration: none;
     transition: all .3s;
+    margin-right: 1rem;
+    font-weight: 500;
 
     &:hover {
       color: darken(#f5f5f5, $amount: 10);

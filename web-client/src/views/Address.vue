@@ -40,7 +40,7 @@ import CoinsInfo from "../components/CoinsInfo.vue";
 import TxList from "../components/TxList.vue";
 import { getScoring } from "../common/http";
 
-import copy from 'copy-to-clipboard';
+import copy from "copy-to-clipboard";
 
 @Component({
   components: {
@@ -66,21 +66,23 @@ export default class Address extends Vue {
     } catch (error) {
       this.result = null;
       this.isLoading = false;
-      alert('Ошибка выполнения запроса. Возможно, вы превысили лимит 15 запросов/час.');
-      document.location.href = '/';
+      alert(
+        "Ошибка выполнения запроса. Возможно, вы превысили лимит 15 запросов/час."
+      );
+      document.location.href = "/";
     }
-    
+
     this.isLoading = false;
   }
 
   copyAddress() {
     copy(this.address);
-    alert('Copied!');
+    alert("Copied!");
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .address-view {
   display: flex;
   flex-flow: column wrap;
@@ -89,11 +91,12 @@ export default class Address extends Vue {
 
   .address-row {
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
     justify-content: flex-start;
     align-items: center;
     align-self: flex-start;
     margin-left: 1.5rem;
+    margin-right: 1rem;
 
     h3 {
       padding-right: 5px;
@@ -117,20 +120,12 @@ export default class Address extends Vue {
   }
 }
 
-.box {
-  width: calc(100% - 4rem);
-}
-
-.row {
-  display: flex;
-  flex-flow: row wrap;
-  width: 100%;
-}
-
-@media screen and (max-width: 1078px) {
-  .row {
-    width: calc(100% - 1rem);
-    flex-flow: column wrap;
+@media screen and (max-width: 600px) {
+  .address-row {
+    margin-top: 1rem;
+    h3 {
+      font-size: 9pt;
+    }
   }
 }
 </style>

@@ -1,8 +1,6 @@
 import axios from "axios";
 import config from "../config";
 
-let baseUrl = "https://minter-scoring.space/api/";
-
 export const HTTP = axios.create({
   baseURL: config.apiURL
 });
@@ -27,3 +25,8 @@ export const getProfile = async (address: string) => {
   let res = await HTTP.get(`profile/${address}`);
   return res.data;
 };
+
+export const getBlacklist = async (address: string) => {
+  let res = await HTTP.get(`blacklist/${address}`);
+  return res.data;
+}

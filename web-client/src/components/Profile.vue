@@ -1,5 +1,5 @@
 <template>
-  <div class="card profile">
+  <div class="card profile" v-bind:class="getBgClass()">
     <div class="avatar">
       <img :src="profile.icon" @error="defaultAvatar" />
     </div>
@@ -22,9 +22,16 @@ import config from "../config";
 @Component
 export default class Profile extends Vue {
   @Prop() profile: any;
+  @Prop() background!: string;
 
   defaultAvatar(e: any) {
     e.target.src = config.avatarURL + this.profile.address;
+  }
+
+  getBgClass() {
+    if (this.background === null) return null;
+    else if (this.background === 'success') return 'bg-success';
+    else if (this.background === 'alert') return 'bg-alert';
   }
 }
 </script>

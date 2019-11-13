@@ -9,7 +9,7 @@ html {
 #app {
   display: flex;
   flex-flow: column wrap;
-  font-family: 'Ubuntu', sans-serif;
+  font-family: "Ubuntu", sans-serif;
   font-size: 12pt;
 }
 
@@ -28,19 +28,52 @@ html {
       0 5px 5px rgba(97, 97, 97, 0.22);
   }
 
-  h1,h2,h3,h4,h5,h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-weight: 600;
   }
 }
 
+.box {
+  width: calc(100% - 4rem);
+}
+
+.row {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+}
+
 @media screen and (max-width: 1078px) {
-  h1,h2,h3,h4,h5,h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-size: 1.1em;
     font-weight: 500;
+  }
+
+  .row {
+    width: calc(100% - 1rem);
+    flex-flow: column wrap;
   }
 
   .card {
     margin: 0.75rem;
     padding: 0 0.75rem 0.75rem 0.75rem;
   }
+}
+
+.bg-success {
+  background-color: #d6ffe1 !important;
+}
+
+.bg-alert {
+  background-color: #ffb0a4 !important;
 }
