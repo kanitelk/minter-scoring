@@ -5,10 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly ./server.ts",
-    "prod": "tsc && node ./build/server.ts"
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -32,9 +29,7 @@
     "node-telegram-bot-api": "^0.30.0",
     "socks5-http-client": "^1.0.4",
     "socks5-https-client": "^1.2.1",
-    "superagent": "^5.1.0",
-    "ts-node-dev": "^1.0.0-pre.40",
-    "typescript": "^3.5.3"
+    "superagent": "^5.1.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"

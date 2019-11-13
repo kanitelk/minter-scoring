@@ -4,6 +4,7 @@ const fs = require("fs");
 const Wallet = require("../models/Wallet");
 const Genesis = require("../models/Genesis");
 const MinterscanProfile = require("../models/MinterscanProfile");
+const BlackList = require("../models/BlackList");
 const config = require("../config");
 const utils = require("../controllers/utils");
 
@@ -221,6 +222,16 @@ const getRating = async address => {
     age = transactions[transactions.length - 1].timestamp;
   else age = Date.now();
 
+  let blackListSearch = await BlackList.findById(address);
+  let blackList = {};
+  if (!blackListSearch) blackList.status = false;
+  else {
+    blackList.status = true;
+    blackList.date = blackListSearch.createdAt;
+    blackList.description = blackListSearch.description;
+    blackList.from = blackListSearch.from;
+  }
+
   if (score > 100) score = 100;
 
   let resultWallet = {
@@ -245,6 +256,7 @@ const getRating = async address => {
     scamTx: scamTx,
     respectTx: respectTx,
     verificationTx: verificationTx,
+    blackList: blackList,
     updatedAt: new Date()
   };
 
