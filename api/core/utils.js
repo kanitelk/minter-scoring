@@ -9,6 +9,32 @@ exports.getAddressInfo = async function(address) {
   return responce.body.data.balances;
 };
 
+exports.getAddressInfoFromNode = async function(address) {
+  const responce = await superagent
+    .get(config.nodeURL + "/address?address=" + address)
+    .retry(3);
+
+  return responce.body.result;
+};
+
+exports.getWalletAge = async function(address) {
+  const responce = await superagent
+    .get(config.explorerURL + "/addresses/" + address + "/transactions")
+    .retry(3);
+
+  const res = await superagent
+    .get(
+      config.explorerURL +
+        "/addresses/" +
+        address +
+        "/transactions?page=" +
+        responce.body.meta.last_page
+    )
+    .retry(3);
+
+  return res.body.data[res.body.data.length - 1].timestamp;
+};
+
 exports.getTransactions = async function(address) {
   let arr = [];
   const responce = await superagent

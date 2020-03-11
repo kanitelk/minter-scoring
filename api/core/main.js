@@ -6,7 +6,7 @@ const Genesis = require("../models/Genesis");
 const MinterscanProfile = require("../models/MinterscanProfile");
 const BlackList = require("../models/BlackList");
 const config = require("../config");
-const utils = require("../controllers/utils");
+const utils = require("./utils");
 
 const { Minter } = require("minter-js-sdk");
 const minterSDK = new Minter({ apiType: "node", baseURL: config.nodeURL });

@@ -1,6 +1,6 @@
 const fs = require("fs");
-const db = require("../db");
-const Genesis = require('../models/Genesis');
+const db = require("../../db");
+const Genesis = require("../../models/Genesis");
 
 const file = fs.readFileSync(__dirname + "/genesis.json");
 
@@ -13,14 +13,14 @@ const setGenesis = async () => {
       address: item.address,
       block: item.height,
       value: Number(item.value / 1000000000000000000)
-    }
-  })
+    };
+  });
 
   await Genesis.deleteMany({});
   Genesis.insertMany(genesisArr, (err, res) => {
     if (err) console.log(err);
     else console.log(`Inserted ${res.length} genesis items`);
-  })
-}
+  });
+};
 
 setGenesis();

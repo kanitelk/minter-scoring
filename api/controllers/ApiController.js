@@ -5,10 +5,13 @@ const rateLimit = require("express-rate-limit");
 
 const config = require("../config");
 
+const utils = require("../core/utils");
+
 const scoring = require("../core/main");
 const Wallet = require("../models/Wallet");
 const Profile = require("../models/MinterscanProfile");
 const BlackList = require("../models/BlackList");
+const Genesis = require("../models/Genesis");
 
 const apiLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 60 minutes
@@ -58,6 +61,37 @@ router.get("/score/:wallet", async (req, res) => {
   };
 
   res.status(200).send(send);
+});
+
+router.get("/feed/:wallet", async (req, res) => {
+  if (req.params.wallet.length !== 42)
+    res.status(400).send("error: incorrect address");
+
+  try {
+    let wallet = await Wallet.findById(req.params.wallet);
+    let genesis = await Genesis.findOne({ address: req.params.wallet });
+
+    let age;
+    try {
+      age = await utils.getWalletAge(req.params.wallet);
+    } catch (error) {
+      age = null;
+    }
+
+    let walletNodeData = await utils.getAddressInfoFromNode(req.params.wallet);
+
+    let send = {
+      wallet_created_days_ago: age,
+      wallet_scoring: wallet ? wallet.score : null,
+      wallet_tx_count: parseInt(walletNodeData.transaction_count),
+      wallet_genesis: genesis ? true : false
+    };
+
+    res.status(200).send(send);
+    retrun;
+  } catch (error) {
+    res.status(400).send(error.toString());
+  }
 });
 
 router.get("/profile/:wallet", async (req, res) => {
