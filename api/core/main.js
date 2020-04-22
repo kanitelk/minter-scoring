@@ -9,18 +9,26 @@ const config = require("../config");
 const utils = require("./utils");
 
 const { Minter } = require("minter-js-sdk");
-const minterSDK = new Minter({ apiType: "node", baseURL: config.nodeURL });
+const minterSDK = new Minter({
+  apiType: "node",
+  baseURL: config.nodeURL,
+  headers: {
+    "Content-Type": "application/json",
+    "X-Project-Id": config.projectId,
+    "X-Project-Secret": config.projectSecret,
+  },
+});
 
-const scoring = async address => {
+const scoring = async (address) => {
   let res = await getRating(address);
   res._id = res.address;
-  Wallet.findOneAndUpdate({ _id: address }, res, { upsert: true }, err => {
+  Wallet.findOneAndUpdate({ _id: address }, res, { upsert: true }, (err) => {
     if (err) console.log(err);
   });
   return res;
 };
 
-const getTxWalletParams = async address => {
+const getTxWalletParams = async (address) => {
   let profile = await MinterscanProfile.findById(address);
   let score = await Wallet.findById(address);
 
@@ -29,11 +37,11 @@ const getTxWalletParams = async address => {
 
   return {
     score: score,
-    profile: profile
+    profile: profile,
   };
 };
 
-const getRating = async address => {
+const getRating = async (address) => {
   let score = 0;
 
   let profile = await MinterscanProfile.findById(address);
@@ -45,6 +53,7 @@ const getRating = async address => {
   let balances = await utils.getAddressInfo(address);
   let delegations = await utils.getDelegations(address);
   let transactions = await utils.getTransactions(address);
+
   let coins = await utils.getCoins();
 
   let totalDelegatedBipValue = Math.round(
@@ -61,7 +70,7 @@ const getRating = async address => {
         let a = await minterSDK.estimateCoinSell({
           coinToSell: item.coin,
           valueToSell: +item.amount,
-          coinToBuy: "BIP"
+          coinToBuy: "BIP",
         });
         item.bip_value = +a.will_get;
         totalBipBalance += +a.will_get;
@@ -174,10 +183,7 @@ const getRating = async address => {
     // RESPECT
     if (
       transactions[i].data.to === address &&
-      base64
-        .decode(transactions[i].payload)
-        .toLowerCase()
-        .includes("respect")
+      base64.decode(transactions[i].payload).toLowerCase().includes("respect")
     ) {
       let walletData = await getTxWalletParams(transactions[i].from);
       let pushData = transactions[i];
@@ -257,7 +263,7 @@ const getRating = async address => {
     respectTx: respectTx,
     verificationTx: verificationTx,
     blackList: blackList,
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   return resultWallet;
@@ -277,7 +283,7 @@ const scoreDelegations = (delegations, totalBipValue) => {
   return score;
 };
 
-const getDelegatedKarma = delegations => {
+const getDelegatedKarma = (delegations) => {
   let res = 0;
   for (let i = 0; i < delegations.length; i++) {
     if (delegations[i].coin === "KARMA") {
@@ -287,7 +293,7 @@ const getDelegatedKarma = delegations => {
   return res;
 };
 
-const getBalanceKarma = balances => {
+const getBalanceKarma = (balances) => {
   let val = 0;
   for (let i = 0; i < balances.length; i++) {
     if (balances[i].coin === "KARMA") {
@@ -297,7 +303,7 @@ const getBalanceKarma = balances => {
   return val;
 };
 
-const scoreBalances = balances => {
+const scoreBalances = (balances) => {
   let score = 0;
 
   // COINS NUMBER
@@ -332,7 +338,7 @@ const scoreBalances = balances => {
   return score;
 };
 
-const scoreDelegatedKarma = val => {
+const scoreDelegatedKarma = (val) => {
   let score = 0;
   if (val > 0 && val < 0.001) score += 1;
   if (val >= 0.001 && val < 0.01) score += 3;
@@ -343,7 +349,7 @@ const scoreDelegatedKarma = val => {
   return score;
 };
 
-const scoreTransactions = transactions => {
+const scoreTransactions = (transactions) => {
   let score = 0;
   if (transactions.length > 0 && transactions.length < 10) score += 0;
   if (transactions.length >= 10 && transactions.length < 50) score += 1;
